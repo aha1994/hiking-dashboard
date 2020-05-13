@@ -1,0 +1,110 @@
+/* Assign grid instructions to our parent grid container */
+.grid-container {
+    display: grid;
+    grid-template-columns: 2fr 14fr .5fr;
+    grid-template-rows: 1fr 14fr 1fr;
+    grid-template-areas:
+      "sidenav header rightCol"
+      "sidenav main rightCol"
+      "sidenav footer rightCol";
+    height: 98vh;
+  }
+  
+/* Give every child element its grid name */
+.header {
+  grid-area: header;
+  background-color: #394263;
+}
+
+.sidenav {
+  grid-area: sidenav;
+  background-color: #394263;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas: 
+  '.'
+  'hikes'
+  'miles'
+  'elevation'
+  '.';
+}
+
+.totalHikes {
+  grid-area: hikes;
+  background-color: #394263;
+}
+
+.totalMiles {
+  grid-area: miles;
+  background-color: #394263;
+}
+
+.totalElevation {
+  grid-area: elevation;
+  background-color: #394263;
+}
+
+.main {
+  background-color: #394263;
+  grid-area: main;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-areas: 
+    "mapbox charts"
+    "log cumulative";
+}
+
+.footer {
+  grid-area: footer;
+  background-color: #394263;
+}
+
+.mapbox {
+  grid-area: mapbox;
+  background-color: #648ca6;
+}
+
+.log {
+  grid-area: log;
+  background-color: #394263;
+}
+
+.charts {
+  grid-area: charts;
+  background-color: #394263;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  grid-template-areas: 'scatter pie';
+
+}
+
+.cumulative {
+  grid-area: cumulative;
+  background-color: #394263;
+}
+
+.scatter {
+  grid-area: scatter;
+  background-color: palegreen;
+}
+
+.pie {
+  grid-area: pie;
+  background-color: palegreen;
+}
+
+h3 {
+  color: black;
+  text-align: center;
+}
+h3 p {
+  color: aliceblue;
+}
+
+.rightCol {
+  grid-area: rightCol;
+  background-color: #394263;
+}
