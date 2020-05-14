@@ -13,6 +13,28 @@ function initalizeMap(){
     id: "mapbox.streets",
     accessToken: API_KEY
     }).addTo(map);
+
+// adding markers
+    d3.csv('static/data/hike_data.csv', function(dataset){
+        console.log(dataset);
+        function formatNumber(num) {
+            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+          }
+        // make markers for each hike location, then add a popup to the marker
+        for (let i = 0; i < dataset.length; i++){
+            lat = dataset[i].Lat;
+            lon = dataset[i].Lon;
+            let m = L.marker([lat,lon]).addTo(map);
+            let p = L.popup({keepInView: true}).setLatLng([dataset[i].Lat,dataset[i].Lon]).setContent(
+                '<h3>' + dataset[i].Hike + ', ' + dataset[i].Park + '</h3>' + 
+                '<p>' + 'Distance: '+ formatNumber(dataset[i].Distance) + '</p>' +
+                '<p>' + 'Elevation: '+ formatNumber(dataset[i].Elevation_Gain) + '</p>' +
+                "<a href='" + dataset[i].Url + "'>Visit the Hike Here!</a>"
+            );
+            m.bindPopup(p);
+        }
+        
+    })
 };
 
 function graphScatter(){
@@ -38,13 +60,12 @@ function graphScatter(){
             width: myDiv.clientWidth,
             margin: {
                 l: 50,
-                r: 40,
-                b: 30,
+                r: 45,
+                b: 35,
                 t: 40,
                 pad: 4
             },
             title: 'Miles Hiked vs Feet Hiked',
-            plot_bgcolor: 'cyan',
             paper_bgcolor: '#648ca6',
             // xaxis: {
             //     title: 'Miles Hiked',
@@ -174,7 +195,7 @@ function cumulativeMiles(){
             dates.push(Date.parse(date));
             miles.push(parseFloat(dist));
         };
-        console.log(date_strings)
+        // console.log(date_strings)
         cumulative_miles = [];
         miles.reduce(function(a,b,i) { return cumulative_miles[i] = a+b; },0);
 
@@ -205,13 +226,18 @@ function cumulativeMiles(){
 function addTotals(){
     d3.csv('static/data/hike_data.csv', function(dataset){
        // console.log(dataset);
+       function countUnique(iterable) {
+        return new Set(iterable).size;
+      }
         miles = [];
         elevations = [];
+        states = [];
         for (let i = 0; i < dataset.length; i++){
             mile = dataset[i].Distance;
             elevation = dataset[i].Elevation_Gain;
             miles.push(parseFloat(mile));
-            elevations.push(parseFloat(elevation))
+            elevations.push(parseFloat(elevation));
+            states.push(dataset[i].State)
         }
         let totalHikes = miles.length
         let totalMiles = Math.round(miles.reduce((a,b) => a + b,0) * 10)/10;
@@ -222,6 +248,7 @@ function addTotals(){
         document.getElementById('totalHikes').innerHTML = totalHikes;
         document.getElementById('totalMiles').innerHTML = formatNumber(totalMiles) + ' miles';
         document.getElementById('totalElevation').innerHTML = formatNumber(totalElevation) + ' feet';
+        document.getElementById('totalStates').innerHTML = countUnique(states)
     })
 }
 

@@ -21,13 +21,23 @@
   background-color: #394263;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas: 
   '.'
   'hikes'
   'miles'
   'elevation'
+  'states'
   '.';
+}
+
+.icon {
+  grid-area: icon;
+}
+
+.totalStates {
+  grid-area: states;
+  background-color: #394263;
 }
 
 .totalHikes {
@@ -64,11 +74,13 @@
 .mapbox {
   grid-area: mapbox;
   background-color: #648ca6;
+  margin:  3px 3px 3px 3px;
 }
 
 .log {
   grid-area: log;
   background-color: #394263;
+  margin:  3px 3px 3px 3px;
 }
 
 .charts {
@@ -78,22 +90,25 @@
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(1, 1fr);
   grid-template-areas: 'scatter pie';
-
+  
 }
 
 .cumulative {
   grid-area: cumulative;
   background-color: #394263;
+  margin:  3px 3px 3px 3px;
 }
 
 .scatter {
   grid-area: scatter;
   background-color: palegreen;
+  margin:  3px 3px 3px 3px;
 }
 
 .pie {
   grid-area: pie;
   background-color: palegreen;
+  margin:  3px 3px 3px 3px;
 }
 
 h3 {
