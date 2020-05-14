@@ -252,6 +252,10 @@ function addTotals(){
     })
 }
 
+function populateDropDown(){
+    
+}
+
 initalizeMap();
 graphScatter();
 graphPie();

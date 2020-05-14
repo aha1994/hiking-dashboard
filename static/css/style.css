@@ -75,12 +75,14 @@
   grid-area: mapbox;
   background-color: #648ca6;
   margin:  3px 3px 3px 3px;
+  border-radius: 10px;
 }
 
 .log {
   grid-area: log;
   background-color: #394263;
   margin:  3px 3px 3px 3px;
+  border-radius: 10px;
 }
 
 .charts {
@@ -101,13 +103,13 @@
 
 .scatter {
   grid-area: scatter;
-  background-color: palegreen;
+  background-color: #394263;
   margin:  3px 3px 3px 3px;
 }
 
 .pie {
   grid-area: pie;
-  background-color: palegreen;
+  background-color: #394263;
   margin:  3px 3px 3px 3px;
 }
 
@@ -122,4 +124,16 @@ h3 p {
 .rightCol {
   grid-area: rightCol;
   background-color: #394263;
+}
+
+.main-svg {
+  border-radius: 10px;
+}
+
+.main-svg:hover {
+  transform: scale(1.01);
+}
+
+.mapbox:hover{
+  transform: scale(1.01);
 }
