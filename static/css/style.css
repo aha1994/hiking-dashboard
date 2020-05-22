@@ -134,9 +134,10 @@ h5 {
   text-align: center;
   font-size: medium;
 }
-h5 p {
-  color: aliceblue;
-  font-size: medium;
+
+.popText {
+  color: black;
+  text-align: left;
 }
 
 div p {

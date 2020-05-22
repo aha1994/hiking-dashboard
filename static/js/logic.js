@@ -27,8 +27,8 @@ function initalizeMap(){
             let m = L.marker([lat,lon]).addTo(map);
             let p = L.popup({keepInView: true}).setLatLng([dataset[i].Lat,dataset[i].Lon]).setContent(
                 '<h3>' + dataset[i].Hike + ', ' + dataset[i].Park + '</h3>' + 
-                '<p>' + 'Distance: '+ formatNumber(dataset[i].Distance) + '</p>' +
-                '<p>' + 'Elevation: '+ formatNumber(dataset[i].Elevation_Gain) + '</p>' +
+                '<h6 id="popText">' + 'Distance: '+ formatNumber(dataset[i].Distance) + '</h6>' +
+                '<h6 id="popText">' + 'Elevation: '+ formatNumber(dataset[i].Elevation_Gain) + '</h6>' +
                 "<a href='" + dataset[i].Url + "'>Visit the Hike Here!</a>"
             );
             m.bindPopup(p);
@@ -124,11 +124,18 @@ function graphPie(){
     })
 }
 
-function populateLog(){
+function populateLog(state = 'All'){
     Plotly.d3.csv('static/data/hike_data.csv', function(err,rows){
         function unpack(rows, key) {
             return rows.map(function(row) { return row[key]; });
-        }
+        };
+
+        if(state == 'All'){
+            rows = rows;
+        } else{
+            rows = rows.filter(r => r.State == state)
+        };
+
         var headerNames = Plotly.d3.keys(rows[0]);
         var wantedNames = headerNames.slice(0,7);
         wantedNames.splice(3,1);
@@ -182,9 +189,15 @@ function populateLog(){
     })
 }
 
-function cumulativeMiles(){
+function cumulativeMiles(state = 'All'){
     d3.csv('static/data/hike_data.csv', function(dataset){
         // console.log(dataset);
+        if(state == 'All'){
+            dataset = dataset;
+        } else{
+            dataset = dataset.filter(d => d.State == state)
+        };
+
         dates = [];
         miles = [];
         date_strings = [];
@@ -225,13 +238,13 @@ function cumulativeMiles(){
 
 function addTotals(state = 'All'){
     d3.csv('static/data/hike_data.csv', function(dataset){
-       console.log(dataset);
+       // console.log(dataset);
        if(state == 'All'){
            dataset = dataset;
        } else{
            dataset = dataset.filter(d => d.State == state)
-       }
-       console.log(dataset)
+       };
+       // console.log(dataset)
        function countUnique(iterable) {
         return new Set(iterable).size;
       }
@@ -297,11 +310,12 @@ function populateDropDown(){
 
 
 
+let x = 'California';
 initalizeMap();
 populateDropDown();
 graphScatter();
 graphPie();
-populateLog();
-cumulativeMiles();
-addTotals();
+populateLog(x);
+cumulativeMiles(x);
+addTotals(x);
 
