@@ -223,38 +223,55 @@ function cumulativeMiles(){
     })
 }
 
-function addTotals(){
+function addTotals(state = 'All'){
     d3.csv('static/data/hike_data.csv', function(dataset){
-       // console.log(dataset);
+       console.log(dataset);
+       if(state == 'All'){
+           dataset = dataset;
+       } else{
+           dataset = dataset.filter(d => d.State == state)
+       }
+       console.log(dataset)
        function countUnique(iterable) {
         return new Set(iterable).size;
       }
         miles = [];
         elevations = [];
         states = [];
+        parks = [];
         for (let i = 0; i < dataset.length; i++){
             mile = dataset[i].Distance;
             elevation = dataset[i].Elevation_Gain;
             miles.push(parseFloat(mile));
             elevations.push(parseFloat(elevation));
-            states.push(dataset[i].State)
+            states.push(dataset[i].State);
+            parks.push(dataset[i].Park);
         }
         let totalHikes = miles.length
         let totalMiles = Math.round(miles.reduce((a,b) => a + b,0) * 10)/10;
         let totalElevation = elevations.reduce((a,b) => a + b,0);
+        
         function formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-          }
+        }
+        
         document.getElementById('totalHikes').innerHTML = totalHikes;
         document.getElementById('totalMiles').innerHTML = formatNumber(totalMiles) + ' miles';
         document.getElementById('totalElevation').innerHTML = formatNumber(totalElevation) + ' feet';
-        document.getElementById('totalStates').innerHTML = countUnique(states)
+        
+        if (state == 'All'){
+            document.getElementById('totalStates').innerHTML = countUnique(states)
+        } else{
+            document.getElementById('totalStates').innerHTML = countUnique(parks);
+            document.getElementById('totalCounts').textContent = 'Total Parks visited:'
+        }
+        
     })
 }
 
 function populateDropDown(){
     d3.csv('static/data/hike_data.csv', function(dataset){
-        console.log(dataset);
+        // console.log(dataset);
         function countUnique(iterable) {
             return new Set(iterable);
           }
@@ -266,9 +283,9 @@ function populateDropDown(){
         states = countUnique(states)
         states = Array.from(states)
         states.unshift('All')
-        console.log(states)
+        // console.log(states)
         var selectDrop = d3.select('#dropdown')
-        console.log(states[0])
+        // console.log(states[0])
         selectDrop.selectAll('option')
             .data(states)
             .enter()

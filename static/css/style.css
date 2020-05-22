@@ -139,6 +139,12 @@ h5 p {
   font-size: medium;
 }
 
+div p {
+  color: aliceblue;
+  font-size: medium;
+  text-align: center;
+}
+
 .rightCol {
   grid-area: rightCol;
   background-color: #394263;
