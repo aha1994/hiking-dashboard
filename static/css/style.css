@@ -7,13 +7,29 @@
       "sidenav header rightCol"
       "sidenav main rightCol"
       "sidenav footer rightCol";
-    height: 98vh;
+    height: 100vh;
   }
   
 /* Give every child element its grid name */
 .header {
   grid-area: header;
   background-color: #394263;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-template-areas: '. . dropdown . .';
+}
+
+.select{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdown {
+  grid-area: dropdown;
+  background-color: #648ca6;
+  width: fit-content;
 }
 
 .sidenav {
@@ -23,7 +39,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-areas: 
-  '.'
+  'dropdown'
   'hikes'
   'miles'
   'elevation'
@@ -113,12 +129,14 @@
   margin:  3px 3px 3px 3px;
 }
 
-h3 {
+h5 {
   color: black;
   text-align: center;
+  font-size: medium;
 }
-h3 p {
+h5 p {
   color: aliceblue;
+  font-size: medium;
 }
 
 .rightCol {

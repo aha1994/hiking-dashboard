@@ -6,6 +6,7 @@
     <title>Hiking DashBoard</title>
     <link rel="stylesheet" href="static/css/style.css">
     <link rel="icon" type="image/png" href="static/img/icon.png">
+    
 
     <!-- plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -22,17 +23,20 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
     integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
     crossorigin=""></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
     <div class="grid-container">
         <header class="header">
-            
+                 
         </header>
         <aside class="sidenav">
-            <h3 class='totalHikes'>Total Hikes: <p id='totalHikes'></p></h3>
-            <h3 class='totalMiles'>Total Distance Hiked: <p id='totalMiles'></p></h3>
-            <h3 class='totalElevation'>Total Elevation Hiked: <p id='totalElevation'> </p></h3>
-            <h3 class='totalStates'>Total States Hiked: <p id='totalStates'></p></h3>
+            <div class='select'><select class="dropdown" id='dropdown'> </select></div>
+            <h5 class='totalHikes'>Total Hikes: <p id='totalHikes'></p></h5>
+            <h5 class='totalMiles'>Total Distance Hiked: <p id='totalMiles'></p></h5>
+            <h5 class='totalElevation'>Total Elevation Hiked: <p id='totalElevation'> </p></h5>
+            <h5 class='totalStates'>Total States Hiked: <p id='totalStates'></p></h5>
         </aside>
         <main class="main"> 
             <div class='mapbox' id="map"></div>

@@ -16,7 +16,7 @@ function initalizeMap(){
 
 // adding markers
     d3.csv('static/data/hike_data.csv', function(dataset){
-        console.log(dataset);
+        // console.log(dataset);
         function formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
           }
@@ -154,7 +154,7 @@ function populateLog(){
               values: headerValues,
               align: "center",
               line: {width: 1, color: 'rgb(50, 50, 50)'},
-              fill: {color: ['rgb(235, 100, 230)']},
+              fill: {color: ['F18A3F']},
               font: {family: "Arial", size: 8, color: "white"}
             },
             cells: {
@@ -253,12 +253,38 @@ function addTotals(){
 }
 
 function populateDropDown(){
-    
+    d3.csv('static/data/hike_data.csv', function(dataset){
+        console.log(dataset);
+        function countUnique(iterable) {
+            return new Set(iterable);
+          }
+        states = [];
+        for (let i = 0; i < dataset.length; i++) {
+            state = dataset[i].State;
+            states.push(state)
+        }
+        states = countUnique(states)
+        states = Array.from(states)
+        states.unshift('All')
+        console.log(states)
+        var selectDrop = d3.select('#dropdown')
+        console.log(states[0])
+        selectDrop.selectAll('option')
+            .data(states)
+            .enter()
+            .append('option')
+            .text(function(d) {return d})
+            .attr(function(d) {return d})
+    })
 }
 
+
+
 initalizeMap();
+populateDropDown();
 graphScatter();
 graphPie();
 populateLog();
 cumulativeMiles();
 addTotals();
+
