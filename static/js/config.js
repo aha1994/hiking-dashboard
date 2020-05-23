@@ -6,7 +6,7 @@ const map_zooms = {
     'Alaska': [[64.07, -152.28], 6],
     'Arizona': [[34.27, -111.66], 6],
     'Arkansas': [[34.89, -92.44], 6],
-    'California': [[37.18, -119.47], 6],
+    'California': [[37.18, -119.47], 5],
     'Colorado': [[39.00, -105.55], 6],
     'Connecticut': [[41.62, -72.73], 6],
     'Delaware': [[38.99, -75.51], 6],
@@ -56,6 +56,6 @@ const map_zooms = {
     'American Samoa': [[-13.85, -169.06], 6],
     'Guam': [[12.98, 143.58], 6],
     'Northern Mariana Islands': [[18.32, 146.03], 6],
-    'Puerto Rico': [[18.22, -66.43], 6],
+    'Puerto Rico': [[18.22, -66.43], 8],
     'U.S. Virgin Islands': [[18.05, -64.80], 6],
 }

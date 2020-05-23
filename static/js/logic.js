@@ -317,7 +317,7 @@ function cumulativeMiles(state = 'All'){
             title: "Cumulative Miles Hiked",
             margin: {
                 l: 30,
-                r: 30,
+                r: 20,
                 b: 40,
                 t: 30,
                 pad: 4
@@ -368,7 +368,8 @@ function addTotals(state = 'All'){
         document.getElementById('totalElevation').innerHTML = formatNumber(totalElevation) + ' feet';
         
         if (state == 'All'){
-            document.getElementById('totalStates').innerHTML = countUnique(states)
+            document.getElementById('totalStates').innerHTML = countUnique(states);
+            document.getElementById('totalCounts').textContent = 'Total States visited:'
         } else{
             document.getElementById('totalStates').innerHTML = countUnique(parks);
             document.getElementById('totalCounts').textContent = 'Total Parks visited:'
@@ -389,7 +390,7 @@ function populateDropDown(){
             states.push(state)
         }
         states = countUnique(states)
-        states = Array.from(states)
+        states = Array.from(states).sort()
         states.unshift('All')
         // console.log(states)
         var selectDrop = d3.select('#dropdown')
@@ -404,21 +405,20 @@ function populateDropDown(){
 };
 
 function adjustMap(state = 'All', map){
-    map.flyTo([map_zooms[`${state}`][0][0], map_zooms[`${state}`][0][1]], map_zooms[`${state}`][1])
+    map.flyTo([map_zooms[`${state}`][0][0], map_zooms[`${state}`][0][1]], map_zooms[`${state}`][1]);
 };
 
+// applys filter to dataset to display state specific data, or total data
 function selectFilter(state){
-    adjustMap(state, map)
+    adjustMap(state, map);
     graphScatter(state);
     graphPie(state);
     populateLog(state);
     cumulativeMiles(state);
     addTotals(state);
-}
+};
 
-
-// let x = 'Colorado';
-
+// initalizing the page to display total hikes
 let map = initalizeMap();
 populateDropDown();
 graphScatter();
