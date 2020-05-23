@@ -1,8 +1,8 @@
 // Initializing map tile, view tile, and geojson tile
 function initalizeMap(){
     var map = L.map("map", {
-    center: [33.749, -84.388],
-    zoom: 5,
+    center: [39.5, -98.35],
+    zoom: 4,
     attributionControl: false,
     });
 
@@ -38,44 +38,91 @@ function initalizeMap(){
     return map
 };
 
-function graphScatter(){
+function graphScatter(state = 'All'){
     d3.csv('static/data/hike_data.csv', function(dataset){
-        //console.log(dataset);
-        let x_axis = [];
-        let y_axis = [];
-        var myDiv = document.getElementById("scatter");
-        for (let i = 0; i < dataset.length; i++){
-            x_axis.push(parseFloat(dataset[i].Distance))
-            y_axis.push(parseFloat(dataset[i].Elevation_Gain))
+        if(state == 'All'){
+            dataset = dataset;
+            let x_axis = [];
+            let y_axis = [];
+            var myDiv = document.getElementById("scatter");
+            for (let i = 0; i < dataset.length; i++){
+                x_axis.push(parseFloat(dataset[i].Distance))
+                y_axis.push(parseFloat(dataset[i].Elevation_Gain))
+            };
+            var trace1 = {
+                x: x_axis,
+                y: y_axis,
+                mode: 'markers',
+                type: 'scatter',
+            };
+            var data = [trace1]
+            var layout = {
+                autosize: false,
+                height: myDiv.clientHeight,
+                width: myDiv.clientWidth,
+                margin: {
+                    l: 50,
+                    r: 45,
+                    b: 35,
+                    t: 40,
+                    pad: 4
+                },
+                title: 'Miles Hiked vs Feet Hiked',
+                paper_bgcolor: '#648ca6',
+            };
+            Plotly.newPlot('scatter', data, layout);
+        } else{
+            stateDF = dataset.filter(d => d.State == state);
+            otherDF = dataset.filter(d => d.State !== state);
+            var myDiv = document.getElementById("scatter");
+
+            let x_axis_state = [];
+            let y_axis_state = [];
+            let x_axis_other = [];
+            let y_axis_other = [];
+
+            for (let i = 0; i < stateDF.length; i++){
+                x_axis_state.push(parseFloat(stateDF[i].Distance));
+                y_axis_state.push(parseFloat(stateDF[i].Elevation_Gain));
+            };
+            
+            for (let i = 0; i < otherDF.length; i++){
+                x_axis_other.push(parseFloat(otherDF[i].Distance));
+                y_axis_other.push(parseFloat(otherDF[i].Elevation_Gain));
+            };
+            var traceState = {
+                x: x_axis_state,
+                y: y_axis_state,
+                mode: 'markers',
+                type: 'scatter',
+                name: `${state}`
+            };
+            var traceOther = {
+                x: x_axis_other,
+                y: y_axis_other,
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Other State'
+            };
+            data = [traceOther, traceState];
+            var layout = {
+                autosize: false,
+                height: myDiv.clientHeight,
+                width: myDiv.clientWidth,
+                margin: {
+                    l: 50,
+                    r: 45,
+                    b: 35,
+                    t: 40,
+                    pad: 4
+                },
+                title: 'Miles Hiked vs Feet Hiked',
+                paper_bgcolor: '#648ca6',
+                showlegend: false,
+            };
+            Plotly.newPlot('scatter', data, layout)
         };
-        var trace1 = {
-            x: x_axis,
-            y: y_axis,
-            mode: 'markers',
-            type: 'scatter',
-        };
-        var data = [trace1]
-        var layout = {
-            autosize: false,
-            height: myDiv.clientHeight,
-            width: myDiv.clientWidth,
-            margin: {
-                l: 50,
-                r: 45,
-                b: 35,
-                t: 40,
-                pad: 4
-            },
-            title: 'Miles Hiked vs Feet Hiked',
-            paper_bgcolor: '#648ca6',
-            // xaxis: {
-            //     title: 'Miles Hiked',
-            // },
-            // yaxis: {
-            //     title: 'Elevation Hiked',
-            // }
-        };
-        Plotly.newPlot('scatter', data, layout)
+
     })
 };
 
@@ -195,12 +242,12 @@ function populateLog(state = 'All'){
             cellValue = unpack(rows, wantedNames[i]);
             cellValues[i] = cellValue;
         };
+
         // Have this for loop run in order to make the table show
         // most recent event at the top
         for (i = 0; i < cellValues.length; i++){
             cellValues[i] = cellValues[i].reverse()
-        }
-        ;
+        };
         var data = [{
             type: 'table',
             columnwidth: [500,1000,1000,1000,400,600],
@@ -267,11 +314,11 @@ function cumulativeMiles(state = 'All'){
         }];
 
         var layout = {
-            title: "Miles Hiked",
+            title: "Cumulative Miles Hiked",
             margin: {
                 l: 30,
                 r: 30,
-                b: 25,
+                b: 40,
                 t: 30,
                 pad: 4
             },
@@ -354,19 +401,30 @@ function populateDropDown(){
             .text(function(d) {return d})
             .attr(function(d) {return d})
     })
+};
+
+function adjustMap(state = 'All', map){
+    map.flyTo([map_zooms[`${state}`][0][0], map_zooms[`${state}`][0][1]], map_zooms[`${state}`][1])
+};
+
+function selectFilter(state){
+    adjustMap(state, map)
+    graphScatter(state);
+    graphPie(state);
+    populateLog(state);
+    cumulativeMiles(state);
+    addTotals(state);
 }
 
 
-
-let x = 'Georgia';
+// let x = 'Colorado';
 
 let map = initalizeMap();
 populateDropDown();
 graphScatter();
-graphPie(x);
-populateLog(x);
-cumulativeMiles(x);
-addTotals(x);
-
+graphPie();
+populateLog();
+cumulativeMiles();
+addTotals();
 
 
