@@ -34,7 +34,8 @@ function initalizeMap(){
             m.bindPopup(p);
         }
         
-    })
+    });
+    return map
 };
 
 function graphScatter(){
@@ -78,49 +79,96 @@ function graphScatter(){
     })
 };
 
-function graphPie(){
+function graphPie(state = 'All'){
     d3.csv('static/data/hike_data.csv', function(dataset){
         //console.log(dataset);
         let colorscale = ['F18A3F','F16A45','F04C4B','EF506F','EE5692','ED5BB2','EC61D0','EA66EB','CF6BEA','B770E9','A276E8','8F7BE7','8082E6','859BE5','8AB1E4','8FC4E3','94D5E2','99E1DF','9EE0D0','A3E0C5']
-        visits = [];
-        for (let i=0; i < dataset.length; i++){
-            visits.push(dataset[i].abr)
-        };
-        states = {};
-        for (let i=0; i<visits.length; i++){
-            x = visits[i];
-            if (states[x] !== undefined){
-                states[x]++
-            } else {
-                states[x] = 1;
+        
+        if(state == 'All'){
+            dataset = dataset;
+            visits = [];
+            for (let i=0; i < dataset.length; i++){
+                visits.push(dataset[i].abr)
+            };
+            states = {};
+            for (let i=0; i<visits.length; i++){
+                x = visits[i];
+                if (states[x] !== undefined){
+                    states[x]++
+                } else {
+                    states[x] = 1;
+                }
             }
-        }
-        var myDiv = document.getElementById("pie");
-        let data = [{
-            values: Object.values(states),
-            labels: Object.keys(states),
-            type: 'pie',
-            textinfo: 'label',
-            textposition: 'outside',
-        }];
-        let layout = {
-            showlegend:false,
-            autosize: false,
-            height: myDiv.clientHeight,
-            width: myDiv.clientWidth,
-            margin: {
-                l: 30,
-                r: 40,
-                b: 30,
-                t: 40,
-                pad: 4
-            },
-            title: 'Hikes by State',
-            plot_bgcolor: 'cyan',
-            paper_bgcolor: '#648ca6',
-            colorway : colorscale
+            var myDiv = document.getElementById("pie");
+            let data = [{
+                values: Object.values(states),
+                labels: Object.keys(states),
+                type: 'pie',
+                textinfo: 'label',
+                textposition: 'outside',
+            }];
+            let layout = {
+                showlegend:false,
+                autosize: false,
+                height: myDiv.clientHeight,
+                width: myDiv.clientWidth,
+                margin: {
+                    l: 30,
+                    r: 40,
+                    b: 30,
+                    t: 40,
+                    pad: 4
+                },
+                title: 'Hikes by State',
+                plot_bgcolor: 'cyan',
+                paper_bgcolor: '#648ca6',
+                colorway : colorscale
+            };
+            Plotly.newPlot('pie', data, layout);
+        } else{
+            dataset = dataset.filter(d => d.State == state);
+            visits = [];
+            for (let i=0; i < dataset.length; i++){
+                visits.push(dataset[i].Park)
+            };
+            parks_hiked = {};
+            for (let i=0; i<visits.length; i++){
+                x = visits[i];
+                if (parks_hiked[x] !== undefined){
+                    parks_hiked[x]++
+                } else {
+                    parks_hiked[x] = 1;
+                }
+            };
+            var myDiv = document.getElementById("pie");
+            let data = [{
+                values: Object.values(parks_hiked),
+                labels: Object.keys(parks_hiked),
+                type: 'pie',
+                textinfo: 'percent',
+                textposition: 'inside',
+            }];
+            let layout = {
+                showlegend:false,
+                autosize: false,
+                height: myDiv.clientHeight,
+                width: myDiv.clientWidth,
+                margin: {
+                    l: 30,
+                    r: 40,
+                    b: 30,
+                    t: 40,
+                    pad: 4
+                },
+                title: `Parks Hiked in ${state}`,
+                plot_bgcolor: 'cyan',
+                paper_bgcolor: '#648ca6',
+                colorway : colorscale
+            };
+            Plotly.newPlot('pie', data, layout);
         };
-        Plotly.newPlot('pie', data, layout)
+
+        
     })
 }
 
@@ -310,12 +358,15 @@ function populateDropDown(){
 
 
 
-let x = 'California';
-initalizeMap();
+let x = 'Georgia';
+
+let map = initalizeMap();
 populateDropDown();
 graphScatter();
-graphPie();
+graphPie(x);
 populateLog(x);
 cumulativeMiles(x);
 addTotals(x);
+
+
 
