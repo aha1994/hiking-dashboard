@@ -153,6 +153,7 @@ function graphPie(state = 'All'){
                 type: 'pie',
                 textinfo: 'label',
                 textposition: 'outside',
+                hole: .4,
             }];
             let layout = {
                 showlegend:false,
@@ -194,6 +195,7 @@ function graphPie(state = 'All'){
                 type: 'pie',
                 textinfo: 'percent',
                 textposition: 'inside',
+                hole: .4,
             }];
             let layout = {
                 showlegend:false,
