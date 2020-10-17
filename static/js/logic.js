@@ -37,7 +37,7 @@ function initalizeMap(){
                 '<h3>' + dataset[i].Hike + ', ' + dataset[i].Park + '</h3>' + 
                 '<h6 id="popText">' + 'Distance: '+ formatNumber(dataset[i].Distance) + '</h6>' +
                 '<h6 id="popText">' + 'Elevation: '+ formatNumber(dataset[i].Elevation_Gain) + '</h6>' +
-                "<a href='" + dataset[i].Url + "'>Visit the Hike Here!</a>"
+                "<a href='" + dataset[i].Url + "' target='_blank'>Visit the Hike Here!</a>"
             );
             m.bindPopup(p);
         }
