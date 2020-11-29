@@ -1,18 +1,14 @@
+const API_BASE_URL = "https://script.google.com/macros/s/AKfycbyrtWLsl5f1PXdvarZYoh2GyR_UYKN05k4q9hbtLpP9FHMsjEU/exec?action=get&resource=";
+
 // Initializing map tile, view tile, and geojson tile
-function initalizeMap(){
+function initializeMap() {
     var map = L.map("map", {
-    center: [39.5, -98.35],
-    zoom: 4,
-    attributionControl: false,
+        center: [39.5, -98.35],
+        zoom: 4,
+        attributionControl: false,
     });
 
-// Adding tile layer
-    // L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-    // attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-    // maxZoom: 18,
-    // id: "mapbox.streets",
-    // accessToken: API_KEY
-    // }).addTo(map);
+    // Adding tile layer
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
         tileSize: 512,
@@ -22,419 +18,408 @@ function initalizeMap(){
         accessToken: API_KEY,
         }).addTo(map);
 
-// adding markers
-    d3.csv('static/data/hike_data.csv', function(dataset){
-        // console.log(dataset);
-        function formatNumber(num) {
-            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-          }
-        // make markers for each hike location, then add a popup to the marker
-        for (let i = 0; i < dataset.length; i++){
-            lat = dataset[i].Lat;
-            lon = dataset[i].Lon;
-            let m = L.marker([lat,lon]).addTo(map);
-            let p = L.popup({keepInView: true}).setLatLng([dataset[i].Lat,dataset[i].Lon]).setContent(
-                '<h3>' + dataset[i].Hike + ', ' + dataset[i].Park + '</h3>' + 
-                '<h6 id="popText">' + 'Distance: '+ formatNumber(dataset[i].Distance) + '</h6>' +
-                '<h6 id="popText">' + 'Elevation: '+ formatNumber(dataset[i].Elevation_Gain) + '</h6>' +
-                "<a href='" + dataset[i].Url + "' target='_blank'>Visit the Hike Here!</a>"
-            );
-            m.bindPopup(p);
+    // make markers for each hike location, then add a popup to the marker
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            var responseBody = JSON.parse(this.responseText);
+
+            for (i in responseBody) {
+                var lat = responseBody[i]["latitude"];
+                var lon = responseBody[i]["longitude"];
+                var marker = L.marker([lat, lon]).addTo(map);
+
+                let popup = L.popup({keepInView: true})
+                    .setLatLng([lat, lon])
+                    .setContent('<h3>' + responseBody[i]["hike"] + ', ' + responseBody[i]["park"] + '</h3>' + 
+                                '<h6 id="popText">' + 'Distance: '+ formatNumber(responseBody[i]["distance"]) + '</h6>' +
+                                '<h6 id="popText">' + 'Elevation: '+ formatNumber(responseBody[i]["elevation"]) + '</h6>' +
+                                "<a href='" + responseBody[i]["link"] + "' target='_blank'>Visit the Hike Here!</a>"
+                );
+
+                marker.bindPopup(popup);
+            }
         }
-        
-    });
-    return map
-};
+    };
 
-function graphScatter(state = 'All'){
-    d3.csv('static/data/hike_data.csv', function(dataset){
-        if(state == 'All'){
-            dataset = dataset;
-            let x_axis = [];
-            let y_axis = [];
-            var myDiv = document.getElementById("scatter");
-            for (let i = 0; i < dataset.length; i++){
-                x_axis.push(parseFloat(dataset[i].Distance))
-                y_axis.push(parseFloat(dataset[i].Elevation_Gain))
-            };
-            var trace1 = {
-                x: x_axis,
-                y: y_axis,
-                mode: 'markers',
-                type: 'scatter',
-            };
-            var data = [trace1]
-            var layout = {
-                autosize: false,
-                height: myDiv.clientHeight,
-                width: myDiv.clientWidth,
-                margin: {
-                    l: 50,
-                    r: 45,
-                    b: 35,
-                    t: 40,
-                    pad: 4
-                },
-                title: 'Miles Hiked vs Feet Hiked',
-                paper_bgcolor: '#648ca6',
-            };
-            Plotly.newPlot('scatter', data, layout);
-        } else{
-            stateDF = dataset.filter(d => d.State == state);
-            otherDF = dataset.filter(d => d.State !== state);
-            var myDiv = document.getElementById("scatter");
+    httpRequest.open("GET", API_BASE_URL + "allHikes", true);
+    httpRequest.send();
 
-            let x_axis_state = [];
-            let y_axis_state = [];
-            let x_axis_other = [];
-            let y_axis_other = [];
+    return map;
+}
 
-            for (let i = 0; i < stateDF.length; i++){
-                x_axis_state.push(parseFloat(stateDF[i].Distance));
-                y_axis_state.push(parseFloat(stateDF[i].Elevation_Gain));
-            };
+function graphScatter(state = "All") {
+    var httpRequest = new XMLHttpRequest();
+
+    if (state == "All") {
+        httpRequest.onreadystatechange = function() {
+            if (this.status == "200") {
+                var responseBody = JSON.parse(this.responseText);
+
+                var distances = [];
+                var elevations = [];
+                for (i in responseBody) {
+                    distances.push(responseBody[i]["distance"]);
+                    elevations.push(responseBody[i]["elevation"]);
+                }
+
+                var trace1 = {
+                    x: distances,
+                    y: elevations,
+                    mode: "markers",
+                    type: "scatter",
+                };
             
-            for (let i = 0; i < otherDF.length; i++){
-                x_axis_other.push(parseFloat(otherDF[i].Distance));
-                y_axis_other.push(parseFloat(otherDF[i].Elevation_Gain));
-            };
-            var traceState = {
-                x: x_axis_state,
-                y: y_axis_state,
-                mode: 'markers',
-                type: 'scatter',
-                name: `${state}`
-            };
-            var traceOther = {
-                x: x_axis_other,
-                y: y_axis_other,
-                mode: 'markers',
-                type: 'scatter',
-                name: 'Other State'
-            };
-            data = [traceOther, traceState];
-            var layout = {
-                autosize: false,
-                height: myDiv.clientHeight,
-                width: myDiv.clientWidth,
-                margin: {
-                    l: 50,
-                    r: 45,
-                    b: 35,
-                    t: 40,
-                    pad: 4
-                },
-                title: 'Miles Hiked vs Feet Hiked',
-                paper_bgcolor: '#648ca6',
-                showlegend: false,
-            };
-            Plotly.newPlot('scatter', data, layout)
+                var data = [trace1]
+            
+                scatterHelper(data);
+            }
+        };
+    } else {
+        httpRequest.onreadystatechange = function() {
+            if (this.status == "200") {
+                var responseBody = JSON.parse(this.responseText);
+
+                var otherDistances = [];
+                var otherElevations = [];
+                var stateDistances = [];
+                var stateElevations = [];
+                for (i in responseBody) {
+                    if (responseBody[i]["state"] == state) {
+                        stateDistances.push(responseBody[i]["distance"]);
+                        stateElevations.push(responseBody[i]["elevation"]);
+                    } else {
+                        otherDistances.push(responseBody[i]["distance"]);
+                        otherElevations.push(responseBody[i]["elevation"]);
+                    }
+                }
+
+                var traceState = {
+                    x: stateDistances,
+                    y: stateElevations,
+                    mode: 'markers',
+                    type: 'scatter',
+                    name: `${state}`
+                };
+
+                var traceOther = {
+                    x: otherDistances,
+                    y: otherElevations,
+                    mode: 'markers',
+                    type: 'scatter',
+                    name: 'Other State'
+                };
+
+                data = [traceOther, traceState];
+            
+                scatterHelper(data);
+            }
+        };
+    }
+
+    httpRequest.open("GET", API_BASE_URL + "allHikes", true);
+    httpRequest.send();
+}
+
+function scatterHelper(data) {
+    var scatterDiv = document.getElementById("scatter");
+            
+    var layout = {
+        autosize: false,
+        height: scatterDiv.clientHeight,
+        width: scatterDiv.clientWidth,
+        margin: {
+            l: 50,
+            r: 45,
+            b: 35,
+            t: 40,
+            pad: 4
+        },
+        title: "Miles Hiked vs Feet Hiked",
+        paper_bgcolor: "#648ca6",
+        showlegend: false
+    };
+
+    Plotly.newPlot("scatter", data, layout);
+}
+
+function graphPie(state = "All") {
+    var httpRequest = new XMLHttpRequest();
+
+    if (state == "All") {
+        httpRequest.onreadystatechange = function() {
+            if (this.status == "200") {            
+                var responseBody = JSON.parse(this.responseText);
+
+                var hikesByState = new Map();
+                for (i in responseBody) {
+                    hikesByState.set(STATE_ABBREVIATIONS[responseBody[i]["state"]], parseInt(responseBody[i]["count"]));
+                }
+
+                graphPieHelper("Hikes by State", hikesByState);
+            }
         };
 
-    })
-};
+        httpRequest.open("GET", API_BASE_URL + "hikesByState", true);
+    } else {
+        httpRequest.onreadystatechange = function() {
+            if (this.status == "200") {            
+                var responseBody = JSON.parse(this.responseText);
 
-function graphPie(state = 'All'){
-    d3.csv('static/data/hike_data.csv', function(dataset){
-        //console.log(dataset);
-        let colorscale = ['F18A3F','F16A45','F04C4B','EF506F','EE5692','ED5BB2','EC61D0','EA66EB','CF6BEA','B770E9','A276E8','8F7BE7','8082E6','859BE5','8AB1E4','8FC4E3','94D5E2','99E1DF','9EE0D0','A3E0C5']
-        
-        if(state == 'All'){
-            dataset = dataset;
-            visits = [];
-            for (let i=0; i < dataset.length; i++){
-                visits.push(dataset[i].abr)
-            };
-            states = {};
-            for (let i=0; i<visits.length; i++){
-                x = visits[i];
-                if (states[x] !== undefined){
-                    states[x]++
-                } else {
-                    states[x] = 1;
+                var hikesByPark = new Map();
+                for (i in responseBody) {
+                    hikesByPark.set(responseBody[i]["park"], parseInt(responseBody[i]["count"]));
                 }
+
+                graphPieHelper("State Hikes by Park", hikesByPark);
             }
-            var myDiv = document.getElementById("pie");
-            let data = [{
-                values: Object.values(states),
-                labels: Object.keys(states),
-                type: 'pie',
-                textinfo: 'label',
-                textposition: 'outside',
-                hole: .4,
+        };
+
+        httpRequest.open("GET", API_BASE_URL + "hikesByPark&state=" + state, true);
+    }
+
+    httpRequest.send();
+}
+
+function graphPieHelper(title, hikesByEntity) {
+    var hikesByStatePieChart = document.getElementById("pie");
+
+    let data = [{
+        values: [...hikesByEntity.values()],
+        labels: [...hikesByEntity.keys()],
+        type: "pie",
+        textinfo: "label",
+        textposition: "outside",
+        hole: .4
+    }];
+
+    let layout = {
+        showlegend: false,
+        autosize: false,
+        height: hikesByStatePieChart.clientHeight,
+        width: hikesByStatePieChart.clientWidth,
+        margin: {
+            l: 30,
+            r: 40,
+            b: 30,
+            t: 40,
+            pad: 4
+        },
+        title: title,
+        plot_bgcolor: "cyan",
+        paper_bgcolor: "#648ca6",
+        colorway : ['F18A3F', 'F16A45', 'F04C4B', 'EF506F', 'EE5692', 'ED5BB2', 'EC61D0', 'EA66EB', 'CF6BEA', 'B770E9', 'A276E8', '8F7BE7', '8082E6', '859BE5', '8AB1E4', '8FC4E3', '94D5E2', '99E1DF', '9EE0D0', 'A3E0C5']
+    };
+
+    Plotly.newPlot("pie", data, layout);
+}
+
+function populateLog(state = "All") {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            var responseBody = JSON.parse(this.responseText);
+            
+            var dates = [];
+            var hikes = [];
+            var states = [];
+            var parks = [];
+            var distances = [];
+            var elevations = [];
+            for (i in responseBody) {
+                dates.push(responseBody[i]["date"]);
+                hikes.push(responseBody[i]["hike"]);
+                states.push(responseBody[i]["state"]);
+                parks.push(responseBody[i]["park"]);
+                distances.push(responseBody[i]["distance"]);
+                elevations.push(responseBody[i]["elevation"]);
+            }
+
+            var cellValues = [dates, hikes, states, parks, distances, elevations];
+            var headers = ["Date", "Hike", "State", "Park", "Distance", "Elevation"];
+
+            var data = [{
+                type: "table",
+                columnwidth: [500, 1000, 1000, 1000, 400, 600],
+                columnorder: [0, 1, 2, 3, 4, 5],
+                header: {
+                    values: headers,
+                    align: "center",
+                    line: {width: 1, color: "rgb(50, 50, 50)"},
+                    fill: {color: ["F18A3F"]},
+                    font: {family: "Arial", size: 8, color: "white"}
+                },
+                cells: {
+                    values: cellValues,
+                    align: ["center", "center"],
+                    line: {color: "black", width: 1},
+                    fill: {color: ["rgba(228, 222, 249, 0.65)', 'rgba(228, 222, 249, 0.65)"]},
+                    font: {family: "Arial", size: 9, color: ["black"]}
+                }
             }];
-            let layout = {
-                showlegend:false,
-                autosize: false,
-                height: myDiv.clientHeight,
-                width: myDiv.clientWidth,
+
+            var layout = {
+                title: "Log",
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 30,
+                    pad: 4
+                },
+                paper_bgcolor: "#648ca6",
+            };
+
+            var config = {responsive: true, autosize: true}
+
+            Plotly.newPlot("log", data, layout, config);
+        }
+    };
+
+    if (state == "All") {
+        httpRequest.open("GET", API_BASE_URL + "allHikes", true);
+    } else {
+        httpRequest.open("GET", API_BASE_URL + "stateHikes&state=" + state, true);
+    }
+
+    httpRequest.send();
+}
+
+function cumulativeMiles(state = "All") {
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            var responseBody = JSON.parse(this.responseText);
+
+            var cumulativeMilesByDate = new Map();
+            for (i in responseBody) {
+                cumulativeMilesByDate.set(responseBody[i]["date"], parseInt(responseBody[i]["cumulativeMiles"]));
+            }
+
+            let data = [{
+                x: [...cumulativeMilesByDate.keys()],
+                y: [...cumulativeMilesByDate.values()],
+                type: "scatter",
+            }];
+        
+            var layout = {
+                title: "Cumulative Miles Hiked",
                 margin: {
                     l: 30,
-                    r: 40,
-                    b: 30,
-                    t: 40,
+                    r: 20,
+                    b: 40,
+                    t: 30,
                     pad: 4
                 },
-                title: 'Hikes by State',
-                plot_bgcolor: 'cyan',
-                paper_bgcolor: '#648ca6',
-                colorway : colorscale
+                paper_bgcolor: "#648ca6",
             };
-            Plotly.newPlot('pie', data, layout);
-        } else{
-            dataset = dataset.filter(d => d.State == state);
-            visits = [];
-            for (let i=0; i < dataset.length; i++){
-                visits.push(dataset[i].Park)
-            };
-            parks_hiked = {};
-            for (let i=0; i<visits.length; i++){
-                x = visits[i];
-                if (parks_hiked[x] !== undefined){
-                    parks_hiked[x]++
-                } else {
-                    parks_hiked[x] = 1;
-                }
-            };
-            var myDiv = document.getElementById("pie");
-            let data = [{
-                values: Object.values(parks_hiked),
-                labels: Object.keys(parks_hiked),
-                type: 'pie',
-                textinfo: 'percent',
-                textposition: 'inside',
-                hole: .4,
-            }];
-            let layout = {
-                showlegend:false,
-                autosize: false,
-                height: myDiv.clientHeight,
-                width: myDiv.clientWidth,
-                margin: {
-                    l: 30,
-                    r: 40,
-                    b: 30,
-                    t: 40,
-                    pad: 4
-                },
-                title: `Parks Hiked in ${state}`,
-                plot_bgcolor: 'cyan',
-                paper_bgcolor: '#648ca6',
-                colorway : colorscale
-            };
-            Plotly.newPlot('pie', data, layout);
-        };
-
         
-    })
+            Plotly.newPlot("cumulative", data, layout);
+        }
+    }
+
+    if (state == "All") {
+        httpRequest.open("GET", API_BASE_URL + "cumulativeMilesByDate", true);
+    } else {
+        httpRequest.open("GET", API_BASE_URL + "stateCumulativeMilesByDate&state=" + state, true);
+    }
+
+    httpRequest.send();
 }
 
-function populateLog(state = 'All'){
-    Plotly.d3.csv('static/data/hike_data.csv', function(err,rows){
-        function unpack(rows, key) {
-            return rows.map(function(row) { return row[key]; });
-        };
+function addTotals(state = "All") {
+    if (state == "All") {
+        getDataFromBackend("totalHikes", "totalHikes");
+        getDataFromBackend("totalMiles", "totalMiles", "miles");
+        getDataFromBackend("totalElevation", "totalElevation", "feet");
+        getDataFromBackend("totalStates", "totalStates");
 
-        if(state == 'All'){
-            rows = rows;
-        } else{
-            rows = rows.filter(r => r.State == state)
-        };
+        document.getElementById("totalCounts").textContent = "Total States Visited:"
+    } else {
+        var params = new Map();
+        params.set("state", state);
 
-        var headerNames = Plotly.d3.keys(rows[0]);
-        var wantedNames = headerNames.slice(0,7);
-        wantedNames.splice(3,1);
-        var headerValues = [];
-        var cellValues = [];
-        for (i = 0; i < wantedNames.length; i++) {
-            headerValue = [wantedNames[i]];
-            headerValues[i] = headerValue;
-            cellValue = unpack(rows, wantedNames[i]);
-            cellValues[i] = cellValue;
-        };
+        getDataFromBackend("totalHikes", "stateHikeCount", "", params);
+        getDataFromBackend("totalMiles", "stateMiles", "miles", params);
+        getDataFromBackend("totalElevation", "stateElevation", "feet", params);
+        getDataFromBackend("totalStates", "totalParks", "", params);
 
-        // Have this for loop run in order to make the table show
-        // most recent event at the top
-        for (i = 0; i < cellValues.length; i++){
-            cellValues[i] = cellValues[i].reverse()
-        };
-        var data = [{
-            type: 'table',
-            columnwidth: [500,1000,1000,1000,400,600],
-            columnorder: [0,1,2,3,4,5],
-            header: {
-              values: headerValues,
-              align: "center",
-              line: {width: 1, color: 'rgb(50, 50, 50)'},
-              fill: {color: ['F18A3F']},
-              font: {family: "Arial", size: 8, color: "white"}
-            },
-            cells: {
-              values: cellValues,
-              align: ["center", "center"],
-              line: {color: "black", width: 1},
-              fill: {color: ['rgba(228, 222, 249, 0.65)', 'rgba(228, 222, 249, 0.65)']},
-              font: {family: "Arial", size: 9, color: ["black"]}
-            }
-        }];
-        var layout = {
-            title: "Aaron's Hiking Log",
-            margin: {
-                l: 0,
-                r: 0,
-                b: 0,
-                t: 30,
-                pad: 4
-            },
-            paper_bgcolor: '#648ca6',
-        };
-        var config = {responsive: true,autosize: true}
-        Plotly.newPlot('log', data, layout, config);
-        
-    })
+        document.getElementById("totalCounts").textContent = "Total Parks Visited:"
+    }
 }
 
-function cumulativeMiles(state = 'All'){
-    d3.csv('static/data/hike_data.csv', function(dataset){
-        // console.log(dataset);
-        if(state == 'All'){
-            dataset = dataset;
-        } else{
-            dataset = dataset.filter(d => d.State == state)
-        };
+function adjustMap(map, state = 'All') {
+    map.flyTo([MAP_ZOOMS[`${state}`][0][0], MAP_ZOOMS[`${state}`][0][1]], MAP_ZOOMS[`${state}`][1]);
+}
 
-        dates = [];
-        miles = [];
-        date_strings = [];
-        for (let i = 0; i < dataset.length; i++){
-            date = dataset[i].Date;
-            dist = dataset[i].Distance;
-            date_strings.push(date)
-            dates.push(Date.parse(date));
-            miles.push(parseFloat(dist));
-        };
-        // console.log(date_strings)
-        cumulative_miles = [];
-        miles.reduce(function(a,b,i) { return cumulative_miles[i] = a+b; },0);
-
-        let data = [{
-            x: date_strings,
-            y: cumulative_miles,
-            type: 'scatter',
-        }];
-
-        var layout = {
-            title: "Cumulative Miles Hiked",
-            margin: {
-                l: 30,
-                r: 20,
-                b: 40,
-                t: 30,
-                pad: 4
-            },
-            paper_bgcolor: '#648ca6',
+function populateDropdown() {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            var states = JSON.parse(this.responseText);
+            states.unshift("All");
             
-        };
+            var stateDropdown = document.getElementById("stateDropdown");
 
-        Plotly.newPlot('cumulative', data, layout)
+            for (j = stateDropdown.options.length - 1; j >= 0; j--) {
+                stateDropdown.remove(j);
+            }
 
-    })
+            for (i = 0; i < states.length; i++) {
+                var newOption = document.createElement("option");
+                newOption.text = states[i];
+                newOption.value = states[i];
+
+                stateDropdown.add(newOption);
+            }
+        }
+    };
+
+    httpRequest.open("GET", API_BASE_URL + "states", true);
+    httpRequest.send();
 }
 
-function addTotals(state = 'All'){
-    d3.csv('static/data/hike_data.csv', function(dataset){
-       // console.log(dataset);
-       if(state == 'All'){
-           dataset = dataset;
-       } else{
-           dataset = dataset.filter(d => d.State == state)
-       };
-       // console.log(dataset)
-       function countUnique(iterable) {
-        return new Set(iterable).size;
-      }
-        miles = [];
-        elevations = [];
-        states = [];
-        parks = [];
-        for (let i = 0; i < dataset.length; i++){
-            mile = dataset[i].Distance;
-            elevation = dataset[i].Elevation_Gain;
-            miles.push(parseFloat(mile));
-            elevations.push(parseFloat(elevation));
-            states.push(dataset[i].State);
-            parks.push(dataset[i].Park);
+function getDataFromBackend(documentId, resource, unit = "", extraParameters = new Map()) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            document.getElementById(documentId).innerHTML = formatNumber(this.responseText) + " " + unit;
         }
-        let totalHikes = miles.length
-        let totalMiles = Math.round(miles.reduce((a,b) => a + b,0) * 10)/10;
-        let totalElevation = elevations.reduce((a,b) => a + b,0);
-        
-        function formatNumber(num) {
-            return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-        }
-        
-        document.getElementById('totalHikes').innerHTML = totalHikes;
-        document.getElementById('totalMiles').innerHTML = formatNumber(totalMiles) + ' miles';
-        document.getElementById('totalElevation').innerHTML = formatNumber(totalElevation) + ' feet';
-        
-        if (state == 'All'){
-            document.getElementById('totalStates').innerHTML = countUnique(states);
-            document.getElementById('totalCounts').textContent = 'Total States visited:'
-        } else{
-            document.getElementById('totalStates').innerHTML = countUnique(parks);
-            document.getElementById('totalCounts').textContent = 'Total Parks visited:'
-        }
-        
-    })
+    };  
+
+    var url = API_BASE_URL + resource;
+
+    for (const [k, v] of extraParameters.entries()) {
+        url += "&" + k + "=" + v;
+    }
+
+    httpRequest.open("GET", url, true);
+    httpRequest.send();
 }
 
-function populateDropDown(){
-    d3.csv('static/data/hike_data.csv', function(dataset){
-        // console.log(dataset);
-        function countUnique(iterable) {
-            return new Set(iterable);
-          }
-        states = [];
-        for (let i = 0; i < dataset.length; i++) {
-            state = dataset[i].State;
-            states.push(state)
-        }
-        states = countUnique(states)
-        states = Array.from(states).sort()
-        states.unshift('All')
-        // console.log(states)
-        var selectDrop = d3.select('#dropdown')
-        // console.log(states[0])
-        selectDrop.selectAll('option')
-            .data(states)
-            .enter()
-            .append('option')
-            .text(function(d) {return d})
-            .attr(function(d) {return d})
-    })
-};
+// applies filter to dataset to display state specific data, or total data
+function selectFilter(state) {
+    adjustMap(map, state);
 
-function adjustMap(state = 'All', map){
-    map.flyTo([map_zooms[`${state}`][0][0], map_zooms[`${state}`][0][1]], map_zooms[`${state}`][1]);
-};
-
-// applys filter to dataset to display state specific data, or total data
-function selectFilter(state){
-    adjustMap(state, map);
+    addTotals(state);
     graphScatter(state);
     graphPie(state);
     populateLog(state);
     cumulativeMiles(state);
-    addTotals(state);
-};
+}
 
-// initalizing the page to display total hikes
-let map = initalizeMap();
-populateDropDown();
+// Helper function to add commas to big numbers
+function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+// initializing the page to display total hikes
+let map = initializeMap();
+populateDropdown();
+
+addTotals();
 graphScatter();
 graphPie();
 populateLog();
 cumulativeMiles();
-addTotals();
-
-
