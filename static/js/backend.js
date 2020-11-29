@@ -8,14 +8,18 @@ const LAT_COL = 6;
 const LON_COL = 7;
 const LINK_COL = 8;
 
+const USER_SHEET_MAPPING = {
+  "Aaron": "1Pnx6iQ4wlqvSXxkbfIV419inI3AVHISyQUL3_Jx4K7Y",
+  "Ryan": "1gR1_7ytZUeC73lT_U7_GitdnSDPsGnctbKh6W77jFJQ"
+};
+
 // This single method receives all GET requests, and has to conditional on the different endpoints due to limitations in the Google Script internal routing
 function doGet(request) {
-  var userSheets = {
-    "aaron": "1Pnx6iQ4wlqvSXxkbfIV419inI3AVHISyQUL3_Jx4K7Y",
-    "ryan": "1gR1_7ytZUeC73lT_U7_GitdnSDPsGnctbKh6W77jFJQ"
-  };
+  if (request.parameter.user == null || USER_SHEET_MAPPING[request.parameter.user] == null) {
+    return ContentService.createTextOutput("Please provide a valid user parameter to use this resource.");
+  }
   
-  var ss = SpreadsheetApp.openById(userSheets["aaron"]);
+  var ss = SpreadsheetApp.openById(USER_SHEET_MAPPING[request.parameter.user]);
   var sheet = ss.getActiveSheet();
   
   var fullSheet = sheet.getRange(2, 1, sheet.getLastRow() -  1, 9).getValues();
