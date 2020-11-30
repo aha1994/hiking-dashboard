@@ -82,6 +82,14 @@ function doGet(request) {
     } else {
       return ContentService.createTextOutput(JSON.stringify(getStateHikes(fullSheet, request.parameter.state)));
     }
+  } else if (request.parameter.resource == "yearlyTotals") {
+    return ContentService.createTextOutput(JSON.stringify(getYearlyTotals(fullSheet)));
+  } else if (request.parameter.resource == "stateYearlyTotals") {
+    if (request.parameter.state == null) {
+      return ContentService.createTextOutput("Please provide a state parameter to use this resource.");
+    } else {
+      return ContentService.createTextOutput(JSON.stringify(getStateYearlyTotals(fullSheet, request.parameter.state)));
+    }
   } else {
     return ContentService.createTextOutput("I don't recognize that resource.");
   }
@@ -338,7 +346,7 @@ function getStateHikes(fullSheet, state) {
     
     if (currentState == state) {
       response.unshift({
-        "date": fullSheet[row][DATE_COL].toLocaleDateString("en-US"),
+        "date": new Date(fullSheet[row][DATE_COL]).toLocaleDateString("en-US"),
         "hike": fullSheet[row][HIKE_COL],
         "state": currentState,
         "park": fullSheet[row][PARK_COL].trim(),
@@ -351,6 +359,86 @@ function getStateHikes(fullSheet, state) {
     }
   }
   
+  return response;
+}
+
+function getYearlyTotals(fullSheet) {
+  var response = [];
+
+  var countersByYear = new Map();
+  
+  for (var row in fullSheet) {
+    var year = new Date(fullSheet[row][DATE_COL]).getFullYear();
+    
+    if (countersByYear.has(year)) {
+      var innerMap = new Map();
+      innerMap.set("count", countersByYear.get(year).get("count") + 1);
+      innerMap.set("distance", countersByYear.get(year).get("distance") + fullSheet[row][DISTANCE_COL]);
+      innerMap.set("elevation", countersByYear.get(year).get("elevation") + fullSheet[row][ELEVATION_COL]);
+      
+      countersByYear.set(year, innerMap);
+    } else {
+      var innerMap = new Map();
+      innerMap.set("count", 1);
+      innerMap.set("distance", fullSheet[row][DISTANCE_COL]);
+      innerMap.set("elevation", fullSheet[row][ELEVATION_COL]);
+      
+      countersByYear.set(year, innerMap);
+    }
+  }
+  
+  var response = [];
+  
+  for (const [k, v] of countersByYear.entries()) {
+    response.unshift({
+      "year": k,
+      "count": v.get("count"),
+      "distance": round(v.get("distance"), 1),
+      "elevation": parseInt(v.get("elevation"))
+    });
+  }
+
+  return response;
+}
+
+function getStateYearlyTotals(fullSheet, state) {
+  var response = [];
+
+  var countersByYear = new Map();
+  
+  for (var row in fullSheet) {
+    var year = new Date(fullSheet[row][DATE_COL]).getFullYear();
+    
+    if (fullSheet[row][STATE_COL].trim() == state) {
+      if (countersByYear.has(year)) {
+        var innerMap = new Map();
+        innerMap.set("count", countersByYear.get(year).get("count") + 1);
+        innerMap.set("distance", countersByYear.get(year).get("distance") + fullSheet[row][DISTANCE_COL]);
+        innerMap.set("elevation", countersByYear.get(year).get("elevation") + fullSheet[row][ELEVATION_COL]);
+        
+        countersByYear.set(year, innerMap);
+      } else {
+        var innerMap = new Map();
+        innerMap.set("count", 1);
+        innerMap.set("distance", fullSheet[row][DISTANCE_COL]);
+        innerMap.set("elevation", fullSheet[row][ELEVATION_COL]);
+        
+        countersByYear.set(year, innerMap);
+      }
+    }
+  }
+  
+  var response = [];
+  
+  for (const [k, v] of countersByYear.entries()) {
+    response.unshift({
+      "year": k,
+      "count": v.get("count"),
+      "distance": round(v.get("distance"), 1),
+      "elevation": parseInt(v.get("elevation"))
+    });
+  }
+
   return response;
 }
 
