@@ -2,6 +2,7 @@ const API_BASE_URL = "https://script.google.com/macros/s/AKfycbyrtWLsl5f1PXdvarZ
 const USERS = ["Aaron", "Ryan"];
 var GLOBAL_USER = "Aaron";
 var GLOBAL_STATE = "All";
+var MARKERS = [];
 
 // Initializing map tile, view tile, and geojson tile
 function initializeMap() {
@@ -21,7 +22,19 @@ function initializeMap() {
         accessToken: API_KEY,
         }).addTo(map);
 
-    // make markers for each hike location, then add a popup to the marker
+    markerHelper(map);
+    
+    return map;
+}
+
+// make markers for each hike location, then add a popup to the marker
+function markerHelper(map) {
+    for (marker in MARKERS) {
+        MARKERS[marker].remove();
+    }
+
+    MARKERS = [];
+
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
         if (this.status == "200") {
@@ -41,14 +54,14 @@ function initializeMap() {
                 );
 
                 marker.bindPopup(popup);
+
+                MARKERS.push(marker);
             }
         }
     };
 
     httpRequest.open("GET", API_BASE_URL + "allHikes" + "&user=" + GLOBAL_USER, true);
     httpRequest.send();
-
-    return map;
 }
 
 function graphScatter(state = "All") {
@@ -430,6 +443,8 @@ function selectFilter(state) {
 
 function selectUserFilter(user) {
     GLOBAL_USER = user;
+
+    markerHelper(map);
 
     addTotals(GLOBAL_STATE);
     graphScatter(GLOBAL_STATE);
