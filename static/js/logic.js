@@ -358,7 +358,7 @@ function populateYearly(state = "All") {
                 years.push(responseBody[i]["year"]);
                 counts.push(responseBody[i]["count"]);
                 distances.push(responseBody[i]["distance"]);
-                elevations.push(responseBody[i]["elevation"]);
+                elevations.push(formatNumber(responseBody[i]["elevation"]));
             }
 
             var cellValues = [years, counts, distances, elevations];
