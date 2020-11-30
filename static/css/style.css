@@ -76,10 +76,11 @@
   grid-area: main;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   grid-template-areas: 
     "mapbox charts"
-    "log cumulative";
+    "yearly cumulative"
+    "log log";
 }
 
 .footer {
@@ -108,7 +109,6 @@
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(1, 1fr);
   grid-template-areas: 'scatter pie';
-  
 }
 
 .cumulative {
@@ -127,6 +127,13 @@
   grid-area: pie;
   background-color: #394263;
   margin:  3px 3px 3px 3px;
+}
+
+.yearly {
+  grid-area: yearly;
+  background-color: #394263;
+  margin:  3px 3px 3px 3px;
+  border-radius: 10px;
 }
 
 h5 {

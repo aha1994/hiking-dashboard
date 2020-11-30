@@ -344,6 +344,73 @@ function cumulativeMiles(state = "All") {
     httpRequest.send();
 }
 
+function populateYearly(state = "All") {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            var responseBody = JSON.parse(this.responseText);
+            
+            var years = [];
+            var counts = [];
+            var distances = [];
+            var elevations = [];
+            for (i in responseBody) {
+                years.push(responseBody[i]["year"]);
+                counts.push(responseBody[i]["count"]);
+                distances.push(responseBody[i]["distance"]);
+                elevations.push(responseBody[i]["elevation"]);
+            }
+
+            var cellValues = [years, counts, distances, elevations];
+            var headers = ["Year", "Count", "Distance", "Elevation"];
+
+            var data = [{
+                type: "table",
+                columnwidth: [400, 400, 400, 400],
+                columnorder: [0, 1, 2, 3],
+                header: {
+                    values: headers,
+                    align: "center",
+                    line: {width: 1, color: "rgb(50, 50, 50)"},
+                    fill: {color: ["c45fe7"]},
+                    font: {family: "Arial", size: 10, color: "white"}
+                },
+                cells: {
+                    values: cellValues,
+                    align: ["center", "center"],
+                    line: {color: "black", width: 1},
+                    fill: {color: ["rgba(228, 222, 249, 0.65)', 'rgba(228, 222, 249, 0.65)"]},
+                    font: {family: "Arial", size: 10, color: ["black"]}
+                }
+            }];
+
+            var layout = {
+                title: "Yearly Totals",
+                margin: {
+                    l: 0,
+                    r: 0,
+                    b: 0,
+                    t: 30,
+                    pad: 4
+                },
+                paper_bgcolor: "#648ca6",
+            };
+
+            var config = {responsive: true, autosize: true}
+
+            Plotly.newPlot("yearly", data, layout, config);
+        }
+    };
+
+    if (state == "All") {
+        httpRequest.open("GET", API_BASE_URL + "yearlyTotals" + "&user=" + GLOBAL_USER, true);
+    } else {
+        httpRequest.open("GET", API_BASE_URL + "stateYearlyTotals&state=" + state + "&user=" + GLOBAL_USER, true);
+    }
+
+    httpRequest.send();
+}
+
 function addTotals(state = "All") {
     if (state == "All") {
         getDataFromBackend("totalHikes", "totalHikes");
@@ -422,8 +489,6 @@ function getDataFromBackend(documentId, resource, unit = "", extraParameters = n
         url += "&" + k + "=" + v;
     }
 
-    console.log(url);
-
     httpRequest.open("GET", url, true);
     httpRequest.send();
 }
@@ -439,6 +504,7 @@ function selectFilter(state) {
     graphPie(state);
     populateLog(state);
     cumulativeMiles(state);
+    populateYearly(state);
 }
 
 function selectUserFilter(user) {
@@ -466,3 +532,4 @@ graphScatter();
 graphPie();
 populateLog();
 cumulativeMiles();
+populateYearly();
