@@ -1,4 +1,8 @@
 const API_BASE_URL = "https://script.google.com/macros/s/AKfycbyrtWLsl5f1PXdvarZYoh2GyR_UYKN05k4q9hbtLpP9FHMsjEU/exec?action=get&resource=";
+const USERS = ["Aaron", "Ryan"];
+var GLOBAL_USER = "Aaron";
+var GLOBAL_STATE = "All";
+var MARKERS = [];
 
 // Initializing map tile, view tile, and geojson tile
 function initializeMap() {
@@ -18,7 +22,19 @@ function initializeMap() {
         accessToken: API_KEY,
         }).addTo(map);
 
-    // make markers for each hike location, then add a popup to the marker
+    markerHelper(map);
+    
+    return map;
+}
+
+// make markers for each hike location, then add a popup to the marker
+function markerHelper(map) {
+    for (marker in MARKERS) {
+        MARKERS[marker].remove();
+    }
+
+    MARKERS = [];
+
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function() {
         if (this.status == "200") {
@@ -38,14 +54,14 @@ function initializeMap() {
                 );
 
                 marker.bindPopup(popup);
+
+                MARKERS.push(marker);
             }
         }
     };
 
-    httpRequest.open("GET", API_BASE_URL + "allHikes", true);
+    httpRequest.open("GET", API_BASE_URL + "allHikes" + "&user=" + GLOBAL_USER, true);
     httpRequest.send();
-
-    return map;
 }
 
 function graphScatter(state = "All") {
@@ -117,7 +133,7 @@ function graphScatter(state = "All") {
         };
     }
 
-    httpRequest.open("GET", API_BASE_URL + "allHikes", true);
+    httpRequest.open("GET", API_BASE_URL + "allHikes" + "&user=" + GLOBAL_USER, true);
     httpRequest.send();
 }
 
@@ -160,7 +176,7 @@ function graphPie(state = "All") {
             }
         };
 
-        httpRequest.open("GET", API_BASE_URL + "hikesByState", true);
+        httpRequest.open("GET", API_BASE_URL + "hikesByState" + "&user=" + GLOBAL_USER, true);
     } else {
         httpRequest.onreadystatechange = function() {
             if (this.status == "200") {            
@@ -175,7 +191,7 @@ function graphPie(state = "All") {
             }
         };
 
-        httpRequest.open("GET", API_BASE_URL + "hikesByPark&state=" + state, true);
+        httpRequest.open("GET", API_BASE_URL + "hikesByPark&state=" + state + "&user=" + GLOBAL_USER, true);
     }
 
     httpRequest.send();
@@ -277,9 +293,9 @@ function populateLog(state = "All") {
     };
 
     if (state == "All") {
-        httpRequest.open("GET", API_BASE_URL + "allHikes", true);
+        httpRequest.open("GET", API_BASE_URL + "allHikes" + "&user=" + GLOBAL_USER, true);
     } else {
-        httpRequest.open("GET", API_BASE_URL + "stateHikes&state=" + state, true);
+        httpRequest.open("GET", API_BASE_URL + "stateHikes&state=" + state + "&user=" + GLOBAL_USER, true);
     }
 
     httpRequest.send();
@@ -320,9 +336,9 @@ function cumulativeMiles(state = "All") {
     }
 
     if (state == "All") {
-        httpRequest.open("GET", API_BASE_URL + "cumulativeMilesByDate", true);
+        httpRequest.open("GET", API_BASE_URL + "cumulativeMilesByDate" + "&user=" + GLOBAL_USER, true);
     } else {
-        httpRequest.open("GET", API_BASE_URL + "stateCumulativeMilesByDate&state=" + state, true);
+        httpRequest.open("GET", API_BASE_URL + "stateCumulativeMilesByDate&state=" + state + "&user=" + GLOBAL_USER, true);
     }
 
     httpRequest.send();
@@ -376,8 +392,20 @@ function populateDropdown() {
         }
     };
 
-    httpRequest.open("GET", API_BASE_URL + "states", true);
+    httpRequest.open("GET", API_BASE_URL + "states" + "&user=" + GLOBAL_USER, true);
     httpRequest.send();
+}
+
+function populateUserDropdown() {
+    var userDropdown = document.getElementById("userDropdown");    
+
+    for (i = 0; i < USERS.length; i++) {
+        var newOption = document.createElement("option");
+        newOption.text = USERS[i];
+        newOption.value = USERS[i];
+
+        userDropdown.add(newOption);
+    }
 }
 
 function getDataFromBackend(documentId, resource, unit = "", extraParameters = new Map()) {
@@ -388,11 +416,13 @@ function getDataFromBackend(documentId, resource, unit = "", extraParameters = n
         }
     };  
 
-    var url = API_BASE_URL + resource;
+    var url = API_BASE_URL + resource + "&user=" + GLOBAL_USER;
 
     for (const [k, v] of extraParameters.entries()) {
         url += "&" + k + "=" + v;
     }
+
+    console.log(url);
 
     httpRequest.open("GET", url, true);
     httpRequest.send();
@@ -400,6 +430,8 @@ function getDataFromBackend(documentId, resource, unit = "", extraParameters = n
 
 // applies filter to dataset to display state specific data, or total data
 function selectFilter(state) {
+    GLOBAL_STATE = state;
+
     adjustMap(map, state);
 
     addTotals(state);
@@ -409,6 +441,18 @@ function selectFilter(state) {
     cumulativeMiles(state);
 }
 
+function selectUserFilter(user) {
+    GLOBAL_USER = user;
+
+    markerHelper(map);
+
+    addTotals(GLOBAL_STATE);
+    graphScatter(GLOBAL_STATE);
+    graphPie(GLOBAL_STATE);
+    populateLog(GLOBAL_STATE);
+    cumulativeMiles(GLOBAL_STATE);
+}
+
 // Helper function to add commas to big numbers
 function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -416,6 +460,7 @@ function formatNumber(num) {
 
 // initializing the page to display total hikes
 let map = initializeMap();
+populateUserDropdown();
 populateDropdown();
 
 addTotals();
