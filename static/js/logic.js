@@ -446,11 +446,9 @@ function selectUserFilter(user) {
 
     markerHelper(map);
 
-    addTotals(GLOBAL_STATE);
-    graphScatter(GLOBAL_STATE);
-    graphPie(GLOBAL_STATE);
-    populateLog(GLOBAL_STATE);
-    cumulativeMiles(GLOBAL_STATE);
+    populateDropdown();
+
+    selectFilter("All");
 }
 
 // Helper function to add commas to big numbers
