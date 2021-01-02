@@ -20,7 +20,7 @@
   grid-template-areas: '. . dropdown . .';
 }
 
-.select{
+.select {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,13 +32,28 @@
   width: fit-content;
 }
 
+.button {
+  grid-area: button;
+  background-color: #4CAF50;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  margin: auto auto;
+  display: block;
+}
+
+.button:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
 .sidenav {
   grid-area: sidenav;
   background-color: #394263;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-areas: 
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+  'button'
   'dropdown'
   'hikes'
   'miles'
@@ -166,6 +181,6 @@ div p {
   transform: scale(1.01);
 }
 
-.mapbox:hover{
+.mapbox:hover {
   transform: scale(1.01);
 }

@@ -33,6 +33,7 @@
                  
         </header>
         <aside class="sidenav">
+            <button class='button' type="button" id="newHikeButton">Add New Hike</button>
             <div class='select'><select class="dropdown" id='stateDropdown' onchange="selectFilter(this.value)"> </select></div>
             <div class='select'><select class="dropdown" id='userDropdown' onchange="selectUserFilter(this.value)"> </select></div>
             <div><h5 class='totalHikes'>Total Hikes: </h5><p id='totalHikes'></p></div>
@@ -54,22 +55,61 @@
         <aside class='rightCol'></aside>
     </div>
 
-<!-- Scripts -->
-<script type="text/javascript" src="static/js/config.js"></script>
-<script type="text/javascript" src="static/js/logic.js"></script>
+    <div id="newHikeModal" class="modal">
 
-<!-- Bootstrap JS-->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-crossorigin="anonymous"></script>
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Add New Hike</p>
 
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-crossorigin="anonymous"></script>
+            <label for="hikeDate">Date:</label>
+            <input type="date" id="hikeDate" name="hikeDate">
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-crossorigin="anonymous"></script>
+            <label for="hikeName">Name:</label>
+            <input type="text" id="hikeName" name="hikeName">
+
+            <label for="hikeState">State:</label>
+            <select class="dropdown" id="hikeState"> </select>
+
+            <label for="hikePark">Park:</label>
+            <input type="text" id="hikePark" name="hikePark">
+
+            <label for="hikeDistance">Distance (Miles):</label>
+            <input type="number" id="hikeDistance" name="hikeDistance">
+
+            <label for="hikeElevation">Elevation Gain (Feet):</label>
+            <input type="number" id="hikeElevation" name="hikeElevation">
+
+            <label for="hikeLatitude">Latitude:</label>
+            <input type="number" id="hikeLatitude" name="hikeLatitude">
+
+            <label for="hikeLongitude">Longitude:</label>
+            <input type="number" id="hikeLongitude" name="hikeLongitude">
+
+            <label for="hikeLink">Link:</label>
+            <input type="url" id="hikeLink" name="hikeLink">
+
+            <input type="submit" id="newHikeSubmit" value="Submit">
+        </div>
+      
+      </div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="static/js/config.js"></script>
+    <script type="text/javascript" src="static/js/logic.js"></script>
+
+    <!-- Bootstrap JS-->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://script.google.com/macros/s/AKfycbyrtWLsl5f1PXdvarZYoh2GyR_UYKN05k4q9hbtLpP9FHMsjEU/exec?action=get&resource=";
+const API_BASE_URL = "https://script.google.com/macros/s/AKfycbyLH-P9b9LHBNnNlmPc3DVONO3SNzX7yBXDRNhgmMerRGWXUW5PBGDF/exec?resource=";
 const USERS = ["Aaron", "Ryan"];
 var GLOBAL_USER = "Aaron";
 var GLOBAL_STATE = "All";
@@ -517,6 +517,81 @@ function selectUserFilter(user) {
     selectFilter("All");
 }
 
+// If you want another "state" to be available in the modal dropdown, it needs to be added to `config.js`
+function populateModalStateDropdown() {
+    var hikeStateDropdown = document.getElementById("hikeState");    
+
+    for (const state in STATE_ABBREVIATIONS) {
+        var newOption = document.createElement("option");
+        newOption.text = state;
+        newOption.value = state;
+
+        hikeStateDropdown.add(newOption);
+    }
+}
+
+// Get the modal
+var newHikeModal = document.getElementById("newHikeModal");
+
+// When the user clicks on the button, open the modal
+var newHikeButton = document.getElementById("newHikeButton");
+newHikeButton.onclick = function() {
+    var dateControl = document.querySelector('input[type="date"]');
+
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    var formattedDate = yyyy + '-' + mm + '-' + dd;
+
+    dateControl.value = formattedDate;
+
+    newHikeModal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+var span = document.getElementsByClassName("close")[0];
+span.onclick = function() {
+    newHikeModal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == newHikeModal) {
+    newHikeModal.style.display = "none";
+  }
+}
+
+// When the user submits the hike data, send it to backend to be persisted
+var newHikeSubmit = document.getElementById("newHikeSubmit");
+newHikeSubmit.onclick = function() {
+    var httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = function() {
+        if (this.status == "200") {
+            selectUserFilter(GLOBAL_USER);
+        }
+    };  
+
+    var url = API_BASE_URL + "addHike&user=" + GLOBAL_USER;
+
+    url += "&hikeDate=" + document.getElementById("hikeDate").value;
+    url += "&hikeName=" + document.getElementById("hikeName").value;
+    url += "&hikeState=" + document.getElementById("hikeState").value;
+    url += "&hikePark=" + document.getElementById("hikePark").value;
+    url += "&hikeDistance=" + document.getElementById("hikeDistance").value;
+    url += "&hikeElevation=" + document.getElementById("hikeElevation").value;
+    url += "&hikeLatitude=" + document.getElementById("hikeLatitude").value;
+    url += "&hikeLongitude=" + document.getElementById("hikeLongitude").value;
+    url += "&hikeLink=" + document.getElementById("hikeLink").value;
+
+    httpRequest.open("GET", url, true);
+    httpRequest.send();
+
+    newHikeModal.style.display = "none";
+}
+
 // Helper function to add commas to big numbers
 function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
@@ -526,6 +601,7 @@ function formatNumber(num) {
 let map = initializeMap();
 populateUserDropdown();
 populateDropdown();
+populateModalStateDropdown();
 
 addTotals();
 graphScatter();
