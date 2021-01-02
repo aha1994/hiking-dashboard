@@ -90,9 +90,25 @@ function doGet(request) {
     } else {
       return ContentService.createTextOutput(JSON.stringify(getStateYearlyTotals(fullSheet, request.parameter.state)));
     }
+  } else if (request.parameter.resource == "addHike") {
+    return ContentService.createTextOutput(addHike(request.parameter, sheet));
   } else {
     return ContentService.createTextOutput("I don't recognize that resource.");
   }
+}
+
+function addHike(requestBody, sheet) {
+  sheet.appendRow([requestBody.hikeDate,
+                   requestBody.hikeName,
+                   requestBody.hikeState,
+                   requestBody.hikePark,
+                   requestBody.hikeDistance,
+                   requestBody.hikeElevation,
+                   requestBody.hikeLatitude,
+                   requestBody.hikeLongitude,
+                   requestBody.hikeLink]);
+
+  return "Done";
 }
 
 function getTotalHikeCount(fullSheet) {

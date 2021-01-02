@@ -20,7 +20,7 @@
   grid-template-areas: '. . dropdown . .';
 }
 
-.select{
+.select {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,13 +32,28 @@
   width: fit-content;
 }
 
+.button {
+  grid-area: button;
+  background-color: #4CAF50;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  margin: auto auto;
+  display: block;
+}
+
+.button:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
 .sidenav {
   grid-area: sidenav;
   background-color: #394263;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-areas: 
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+  'button'
   'dropdown'
   'hikes'
   'miles'
@@ -91,14 +106,14 @@
 .mapbox {
   grid-area: mapbox;
   background-color: #648ca6;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
   border-radius: 10px;
 }
 
 .log {
   grid-area: log;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
   border-radius: 10px;
 }
 
@@ -114,25 +129,25 @@
 .cumulative {
   grid-area: cumulative;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
 }
 
 .scatter {
   grid-area: scatter;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
 }
 
 .pie {
   grid-area: pie;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
 }
 
 .yearly {
   grid-area: yearly;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
   border-radius: 10px;
 }
 
@@ -147,8 +162,8 @@ h5 {
   text-align: left;
 }
 
-div p {
-  color: aliceblue;
+.sidenavTitles {
+  color: rgb(240, 248, 255);
   font-size: medium;
   text-align: center;
 }
@@ -166,6 +181,39 @@ div p {
   transform: scale(1.01);
 }
 
-.mapbox:hover{
+.mapbox:hover {
   transform: scale(1.01);
 }
+
+.modal {
+  margin: auto auto;
+  display: flex;
+  max-height: 90%;
+  background-color: darkred(200, 200, 200, 0.75);
+}
+
+.modal-content {
+  max-height: 100%;
+  overflow-y: auto;
+  
+}
+
+.inmodal {
+  margin: 0px 20px 0px 20px;
+}
+
+.inmodallabel {
+  margin: 20px 20px 0px 20px;
+}
+
+.newHikeSubmit {
+  margin: 30px 20px 30px 20px;
+  background-color: darkblue;
+  color: white;
+}
+
+.addHikeTitle {
+  color: darkblue;
+  font-size: x-large;
+  text-align: center;
+} 
