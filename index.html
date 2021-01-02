@@ -36,10 +36,10 @@
             <button class='button' type="button" id="newHikeButton">Add New Hike</button>
             <div class='select'><select class="dropdown" id='stateDropdown' onchange="selectFilter(this.value)"> </select></div>
             <div class='select'><select class="dropdown" id='userDropdown' onchange="selectUserFilter(this.value)"> </select></div>
-            <div><h5 class='totalHikes'>Total Hikes: </h5><p id='totalHikes'></p></div>
-            <div><h5 class='totalMiles'>Total Distance Hiked: </h5><p id='totalMiles'></p></div>
-            <div><h5 class='totalElevation'>Total Elevation Hiked: </h5><p id='totalElevation'> </p></div>
-            <div><h5 class='totalStates' id='totalCounts'>Total States Visited:</h5><p id='totalStates'></p></div>
+            <div><h5 class='totalHikes'>Total Hikes: </h5><p class="sidenavTitles" id='totalHikes'></p></div>
+            <div><h5 class='totalMiles'>Total Distance Hiked: </h5><p class="sidenavTitles" id='totalMiles'></p></div>
+            <div><h5 class='totalElevation'>Total Elevation Hiked: </h5><p class="sidenavTitles" id='totalElevation'> </p></div>
+            <div><h5 class='totalStates' id='totalCounts'>Total States Visited:</h5><p class="sidenavTitles" id='totalStates'></p></div>
         </aside>
         <main class="main">
             <div class='mapbox' id="map"></div>
@@ -60,7 +60,7 @@
         <!-- Modal content -->
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p>Add New Hike</p>
+            <p class="addHikeTitle">Add New Hike</p>
 
             <label class="inmodallabel" for="hikeDate">Date:</label>
             <input class="inmodal" type="date" id="hikeDate" name="hikeDate">

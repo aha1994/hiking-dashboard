@@ -162,8 +162,8 @@ h5 {
   text-align: left;
 }
 
-div p {
-  color: aliceblue;
+.sidenavTitles {
+  color: rgb(240, 248, 255);
   font-size: medium;
   text-align: center;
 }
@@ -189,11 +189,13 @@ div p {
   margin: auto auto;
   display: flex;
   max-height: 90%;
+  background-color: darkred(200, 200, 200, 0.75);
 }
 
 .modal-content {
   max-height: 100%;
   overflow-y: auto;
+  
 }
 
 .inmodal {
@@ -206,4 +208,12 @@ div p {
 
 .newHikeSubmit {
   margin: 30px 20px 30px 20px;
+  background-color: darkblue;
+  color: white;
 }
+
+.addHikeTitle {
+  color: darkblue;
+  font-size: x-large;
+  text-align: center;
+} 
