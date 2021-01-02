@@ -106,14 +106,14 @@
 .mapbox {
   grid-area: mapbox;
   background-color: #648ca6;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
   border-radius: 10px;
 }
 
 .log {
   grid-area: log;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
   border-radius: 10px;
 }
 
@@ -129,25 +129,25 @@
 .cumulative {
   grid-area: cumulative;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
 }
 
 .scatter {
   grid-area: scatter;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
 }
 
 .pie {
   grid-area: pie;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
 }
 
 .yearly {
   grid-area: yearly;
   background-color: #394263;
-  margin:  3px 3px 3px 3px;
+  margin: 3px 3px 3px 3px;
   border-radius: 10px;
 }
 
@@ -183,4 +183,27 @@ div p {
 
 .mapbox:hover {
   transform: scale(1.01);
+}
+
+.modal {
+  margin: auto auto;
+  display: flex;
+  max-height: 90%;
+}
+
+.modal-content {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.inmodal {
+  margin: 0px 20px 0px 20px;
+}
+
+.inmodallabel {
+  margin: 20px 20px 0px 20px;
+}
+
+.newHikeSubmit {
+  margin: 30px 20px 30px 20px;
 }
