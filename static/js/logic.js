@@ -592,6 +592,13 @@ newHikeSubmit.onclick = function() {
     newHikeModal.style.display = "none";
 }
 
+function hikeNameChanged() {
+    var googleMapsLink = document.getElementById("googleMapsLink");
+    var hikeName = document.getElementById("hikeName");
+
+    googleMapsLink.href = "https://www.google.com/maps/search/" + hikeName.value;
+}
+
 // Helper function to add commas to big numbers
 function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')

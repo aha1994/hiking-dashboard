@@ -26,6 +26,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
     crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="grid-container">
@@ -66,7 +77,11 @@
             <input class="inmodal" type="date" id="hikeDate" name="hikeDate">
 
             <label class="inmodallabel" for="hikeName">Name:</label>
-            <input class="inmodal" type="text" id="hikeName" name="hikeName">
+            <input class="inmodal" type="text" id="hikeName" name="hikeName" onkeyup="hikeNameChanged()">
+
+            <a class="inmodal" id="googleMapsLink" href="https://www.google.com/maps/search/" target="_blank" title="test">Google Maps Link</a>
+
+            <a href="https://www.urbandictionary.com/define.php?term=techninja" data-tool-tip="What's a tech ninja?" target="_blank"><i class="fas fa-2x fa-user-ninja" id="tech--ninja"></i></a>
 
             <label class="inmodallabel" for="hikeState">State:</label>
             <select class="inmodal" id="hikeState"> </select>
@@ -86,30 +101,19 @@
             <label class="inmodallabel" for="hikeLongitude">Longitude:</label>
             <input class="inmodal" type="number" id="hikeLongitude" name="hikeLongitude">
 
-            <label class="inmodallabel" for="hikeLink">Link:</label>
+            <label class="inmodallabel" for="hikeLink">AllTrails Link:</label>
             <input class="inmodal" type="url" id="hikeLink" name="hikeLink">
 
             <input class="inmodal newHikeSubmit" type="submit" id="newHikeSubmit" value="Submit">
         </div>
       
-      </div>
+    </div>
 
-    <!-- Scripts -->
+    <script>
+        $( document ).tooltip();
+    </script>
+
     <script type="text/javascript" src="static/js/config.js"></script>
     <script type="text/javascript" src="static/js/logic.js"></script>
-
-    <!-- Bootstrap JS-->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-    crossorigin="anonymous"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-    crossorigin="anonymous"></script>
-
 </body>
 </html>
