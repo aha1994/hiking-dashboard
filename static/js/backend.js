@@ -10,7 +10,8 @@ const LINK_COL = 8;
 
 const USER_SHEET_MAPPING = {
   "Aaron": "1Pnx6iQ4wlqvSXxkbfIV419inI3AVHISyQUL3_Jx4K7Y",
-  "Ryan": "1gR1_7ytZUeC73lT_U7_GitdnSDPsGnctbKh6W77jFJQ"
+  "Ryan": "1gR1_7ytZUeC73lT_U7_GitdnSDPsGnctbKh6W77jFJQ",
+  "Ian": "1HgBPdiWssF9Q8h5eRxlwn7elEiuyhUfM2P5CPfZpBHY"
 };
 
 // This single method receives all GET requests, and has to conditional on the different endpoints due to limitations in the Google Script internal routing
