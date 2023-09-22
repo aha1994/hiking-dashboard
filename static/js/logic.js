@@ -418,7 +418,7 @@ function addTotals(state = "All") {
         getDataFromBackend("totalElevation", "totalElevation", "feet");
         getDataFromBackend("totalStates", "totalStates");
 
-        document.getElementById("totalCounts").textContent = "Total States Visited:"
+        document.getElementById("totalCounts").textContent = "Total Locations Visited:"
     } else {
         var params = new Map();
         params.set("state", state);
